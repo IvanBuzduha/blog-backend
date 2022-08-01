@@ -1,11 +1,10 @@
-import { json } from "express";
 import jwt from "jsonwebtoken";
 
 export default (req, res, next) => {
   const token = (req.headers.authorization || "").replace(/Bearer\s?/, "");
   if (token) {
     try {
-      const decodet = jwt.verify(token, "secret123");
+      const decodet = jwt.verify(token, process.env.secret);
       req.userId = decodet._id;
       next();
     } catch (err) {

@@ -22,3 +22,7 @@ export const postCreateValidation = [
   body("tags", "Wrong format tags").optional().isString(),
   body("imageUrl", "Wrong address to image").optional().isString(),
 ];
+
+export const commentCreateValidation = [
+  body("comments", "Enter the comments text").isLength({ min: 1 }).isString(),
+];
