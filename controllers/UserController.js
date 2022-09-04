@@ -18,7 +18,7 @@ export const register = async (req, res) => {
     const user = await doc.save();
     const secret = process.env.secret;
     const token = jwt.sign({ _id: user._id }, secret, {
-      expiresIn: "30d",
+      expiresIn: "1d",
     });
 
     const { passwordHash, ...userData } = user._doc;
@@ -43,7 +43,7 @@ export const login = async (req, res) => {
       return res.status(403).json({ message: "Wrong password or email" });
     }
     const token = jwt.sign({ _id: user._id }, "secret123", {
-      expiresIn: "30d",
+      expiresIn: "1d",
     });
     const { passwordHash, ...userData } = user._doc;
 

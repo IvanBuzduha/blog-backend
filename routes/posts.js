@@ -2,6 +2,7 @@ import { Router } from "express";
 import {
   create,
   getAll,
+  getAllTags,
   getLastTags,
   getOne,
   getPopularPosts,
@@ -17,6 +18,7 @@ router.get("/", getAll);
 router.get("/popular", getPopularPosts);
 router.get("/:id", getOne);
 router.get("/tags", getLastTags);
+router.get("/alltags", getAllTags);
 router.delete("/:id", checkAuth, remove);
 router.post(
   "/",

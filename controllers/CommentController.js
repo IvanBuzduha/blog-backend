@@ -14,19 +14,21 @@ export const allComments = async (req, res) => {
 export const createComment = async (req, res) => {
   try {
     const postId = req.params.id;
-    const { comments } = req.body;
-
-    if (!comments) return res.json({ message: "Comment cannot be empty" });
+    const { comment } = req.body;
+    // console.log("commentREQ", comment);
+    // console.log("postId", postId);
+    if (!comment) return res.json({ message: "Comment cannot be empty" });
 
     const doc = new CommentModel({
-      comments: req.body.comments,
+      comment,
       user: req.userId,
       post: postId,
     });
+    // console.log("doc", doc);
+    const result = await doc.save().then((doc) => doc.populate("user"));
+    // const result = await doc.save();
+    // console.log("result", result);
 
-    // const result = await doc.save().then((doc) => doc.populate("user"));
-    const result = await doc.save();
-    console.log("result", result);
     // try {
     //   const addComment = await PostModel.findByIdAndUpdate(postId, {
     //     $push: { comments: result.comments },
@@ -43,16 +45,24 @@ export const createComment = async (req, res) => {
 };
 
 export const postComments = async (req, res) => {
-  const id = req.params.id;
-
   try {
+    const id = req.params.id;
     const result = await CommentModel.find({ post: id }).populate("user");
-    const commentsCount = result.length;
 
-    result.push({ commentsCount: commentsCount });
+    console.log("result :>> ", result);
+    // try {
+    //   const postComment = await PostModel.findByIdAndUpdate(id, {
+    //     $push: { commentsCount: result.length },
+    //   });
+    // console.log("postComment", postComment);
+    // } catch (error) {
+    //   console.log(error);
+    // }
+
     if (result) {
       return res.status(200).json(result);
     }
+    commentsCount: result.length;
     return res
       .status(404)
       .json({ error: "There is no such entry in the database" });
@@ -65,15 +75,35 @@ export const postComments = async (req, res) => {
 export const getFirstComments = async (req, res) => {
   try {
     const comments = await CommentModel.find().populate("user").limit(5).exec();
-    // const comment = comments.map((obj) => obj.comment).slice(0, 5);
-
-    // console.log("comments", comments);
     res.json(comments);
   } catch (err) {
     return res.status(500).json({ message: "Failed to get comments" });
   }
 };
+// export const createComment = async (req, res) => {
+//   const { comment, postId } = req.body;
+//   console.log("comment", comment);
+//   console.log("postId", postId);
+//   //   const postId = req.params.id;
+//   const data = {
+//     comment,
+//     user: req.userId,
+//     post: postId,
+//   };
 
+//   const addComment = new CommentModel(data);
+//   try {
+//     const result = await addComment.save().then((doc) => doc.populate("user"));
+//     if (result) {
+//       console.log(result);
+//       return res.status(201).json(result);
+//     }
+//     return res.status(400).json({ error: "Не удалось создать комментарий" });
+//   } catch (err) {
+//     console.log(err);
+//     return res.status(500).json({ error: "Произошла серверная ошибка" });
+//   }
+// };
 // export const createComment = async (req, res) => {
 //   try {
 //     const postId = req.params.id;
@@ -106,8 +136,9 @@ export const getFirstComments = async (req, res) => {
 //   console.log("req.body", req.body);
 //   try {
 //     const { postId, comment } = req.body;
-
-//     if (!comment) return res.json({ message: "Комментарий не может быть пустым" });
+//     console.log("postId :>> ", postId);
+//     if (!comment)
+//       return res.json({ message: "Комментарий не может быть пустым" });
 
 //     const newComment = new CommentModel({ comment });
 //     await newComment.save();

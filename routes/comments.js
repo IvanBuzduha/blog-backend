@@ -5,6 +5,7 @@ import {
   getFirstComments,
   postComments,
 } from "../controllers/CommentController.js";
+import { getPostComments } from "../controllers/PostController.js";
 import checkAuth from "../middleware/checkAuth.js";
 import { commentCreateValidation } from "../validations/validations.js";
 const router = new Router();

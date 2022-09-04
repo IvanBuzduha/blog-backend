@@ -6,7 +6,11 @@ import cors from "cors";
 import postsRoute from "./routes/posts.js";
 import authRoute from "./routes/auth.js";
 import commentsRoute from "./routes/comments.js";
-import { getLastTags, uploadImg } from "./controllers/PostController.js";
+import {
+  getAllTags,
+  getLastTags,
+  uploadImg,
+} from "./controllers/PostController.js";
 
 import dotenv from "dotenv";
 
@@ -32,11 +36,19 @@ const upload = multer({ storage });
 app.use(express.json());
 app.use(cors());
 app.use("/uploads", express.static("uploads"));
-
+app.post("/upload", checkAuth, upload.single("image"), uploadImg);
 app.use("/posts", postsRoute);
 app.use("/auth", authRoute);
 app.use("/comments", commentsRoute);
 app.get("/tags", getLastTags);
+app.get("/alltags", getAllTags);
+
+app.listen(PORT, (err) => {
+  if (err) {
+    return console.log(err);
+  }
+  console.log(`Server started on port localhost:${PORT}`);
+});
 
 // app.post("/auth/login", loginValidation, handlerValidationErrors, login);
 
@@ -75,8 +87,6 @@ app.get("/tags", getLastTags);
 //   create
 // );
 
-app.post("/upload", checkAuth, upload.single("image"), uploadImg);
-
 // app.post("/comments/:id", checkAuth, commentCreateValidation, createComment);
 
 // app.get("/comments/:id", commentCreateValidation, postComments);
@@ -86,10 +96,3 @@ app.post("/upload", checkAuth, upload.single("image"), uploadImg);
 // app.get("/comments", commentCreateValidation, allComments);
 
 // app.get("/comments/firstfive", commentCreateValidation, getFirstComments);
-
-app.listen(PORT, (err) => {
-  if (err) {
-    return console.log(err);
-  }
-  console.log(`Server started on port localhost:${PORT}`);
-});

@@ -29,11 +29,11 @@ export const getPopularPosts = async (req, res) => {
 export const getOne = async (req, res) => {
   try {
     const postId = req.params.id;
-
+    // console.log("postComments :>> ", postComments.length);
     PostModel.findOneAndUpdate(
       { _id: postId },
+      // { commentsCount: 3 },
       { $inc: { viewsCount: 1 } },
-      // { commentsCount: postComments.length },
       { returnDocument: "after" },
       (err, doc) => {
         if (err) {
@@ -41,7 +41,7 @@ export const getOne = async (req, res) => {
             .status(500)
             .json({ message: "The article could not be found" });
         }
-
+        // console.log("commentsCount :>> ", commentsCount);
         if (!doc) {
           return res.status(404).json({ message: "Failed to get article" });
         }
@@ -137,20 +137,31 @@ export const getLastTags = async (req, res) => {
   }
 };
 
-// export const getPostComments = async (req, res) => {
-//   try {
-//     const post = await PostModel.findById(req.params.id).populate("user");
-//     const list = await Promise.all(
-//       post.comments.map((comment) => {
-//         return CommentModel.findById(comment);
-//       })
-//     );
+export const getAllTags = async (req, res) => {
+  try {
+    const posts = await PostModel.find();
+    const tags = posts.map((obj) => obj.tags);
 
-//     res.json(list);
-//   } catch (error) {
-//     res.json({ message: "Something went wrong." });
-//   }
-// };
+    res.json(tags);
+  } catch (err) {
+    return res.status(500).json({ message: "Failed to get tags" });
+  }
+};
+
+export const getPostComments = async (req, res) => {
+  try {
+    const post = await PostModel.findById(req.params.id).populate("user");
+    const list = await Promise.all(
+      post.comments.map((comment) => {
+        return CommentModel.findById(comment);
+      })
+    );
+
+    res.json(list);
+  } catch (error) {
+    res.json({ message: "Something went wrong." });
+  }
+};
 
 // export const allComments = async (req, res) => {
 //   try {
